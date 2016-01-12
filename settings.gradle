@@ -1,0 +1,4 @@
+include 'eventreducer'
+include 'eventreducer:hlc'
+
+rootProject.name = 'eventreducer-json'
