@@ -1,6 +1,7 @@
 package org.eventreducer.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.apache.commons.net.ntp.TimeStamp;
+import org.eventreducer.Command;
 import org.eventreducer.Serializable;
 import org.eventreducer.Serializer;
 
@@ -28,6 +30,7 @@ public class EventReducerModule extends SimpleModule {
         addSerializer(new SerializerSerializer());
         addDeserializer(TimeStamp.class, new TimestampDeserializer());
         setMixInAnnotation(Serializable.class, SerializableMixin.class);
+        setMixInAnnotation(Command.class, CommandMixin.class);
     }
 
     public static abstract class SerializableMixin {
@@ -37,6 +40,16 @@ public class EventReducerModule extends SimpleModule {
 
         @JsonProperty("@hash")
         public abstract <T extends Serializable> Serializer<T> entitySerializer() throws ClassNotFoundException, IllegalAccessException, InstantiationException;
+
+    }
+
+    public static abstract class CommandMixin {
+
+        @JsonProperty("@trace") @JsonInclude(JsonInclude.Include.NON_NULL)
+        public abstract Object trace();
+
+        @JsonProperty("@trace")
+        public abstract void trace(Object trace);
 
     }
 
