@@ -25,6 +25,7 @@ public class EventReducerModule extends SimpleModule {
         super("EventReducerModule", new Version(1,0,0,null, "org.eventreducer.json", "EventReducerModule"));
 
         addSerializer(new TimestampSerializer());
+        addSerializer(new SerializerSerializer());
         addDeserializer(TimeStamp.class, new TimestampDeserializer());
         setMixInAnnotation(Serializable.class, SerializableMixin.class);
     }
@@ -39,6 +40,21 @@ public class EventReducerModule extends SimpleModule {
 
     }
 
+    static class SerializerSerializer extends StdSerializer<Serializer> {
+        protected SerializerSerializer() {
+            super(Serializer.class);
+        }
+
+        @Override
+        public void serialize(Serializer value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+            gen.writeBinary(value.hash());
+        }
+
+        @Override
+        public void serializeWithType(Serializer value, JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
+            serialize(value, gen, serializers);
+        }
+    }
 
     static class TimestampSerializer extends StdSerializer<TimeStamp> {
 
