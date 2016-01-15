@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.apache.commons.net.ntp.TimeStamp;
 import org.eventreducer.Command;
+import org.eventreducer.Event;
 import org.eventreducer.Serializable;
 import org.eventreducer.Serializer;
 
@@ -31,6 +32,7 @@ public class EventReducerModule extends SimpleModule {
         addDeserializer(TimeStamp.class, new TimestampDeserializer());
         setMixInAnnotation(Serializable.class, SerializableMixin.class);
         setMixInAnnotation(Command.class, CommandMixin.class);
+        setMixInAnnotation(Event.class, EventMixin.class);
     }
 
     public static abstract class SerializableMixin {
@@ -51,6 +53,11 @@ public class EventReducerModule extends SimpleModule {
         @JsonProperty("@trace")
         public abstract void trace(Object trace);
 
+    }
+
+    public static abstract class EventMixin {
+        @JsonIgnore
+        public abstract Command command();
     }
 
     static class SerializerSerializer extends StdSerializer<Serializer> {
