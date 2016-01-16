@@ -50,11 +50,15 @@ public class EventReducerModule extends SimpleModule {
         @JsonProperty("@trace")
         public abstract void trace(Object trace);
 
+        @JsonProperty("timestamp")
+        public abstract TimeStamp timestamp();
+
     }
 
     public static abstract class EventMixin {
-        @JsonIgnore
-        public abstract Command command();
+
+        @JsonProperty("timestamp")
+        public abstract TimeStamp timestamp();
     }
 
     static class SerializerSerializer extends StdSerializer<Serializer> {
