@@ -21,6 +21,7 @@ import org.eventreducer.Serializable;
 import org.eventreducer.Serializer;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class EventReducerModule extends SimpleModule {
 
@@ -52,6 +53,13 @@ public class EventReducerModule extends SimpleModule {
 
         @JsonProperty("timestamp")
         public abstract TimeStamp timestamp();
+        @JsonProperty("timestamp")
+        public abstract TimeStamp timestamp(TimeStamp timeStamp);
+
+        @JsonProperty("uuid")
+        public abstract UUID uuid();
+        @JsonProperty("uuid")
+        public abstract UUID uuid(UUID uuid);
 
     }
 
@@ -59,6 +67,14 @@ public class EventReducerModule extends SimpleModule {
 
         @JsonProperty("timestamp")
         public abstract TimeStamp timestamp();
+        @JsonProperty("timestamp")
+        public abstract TimeStamp timestamp(TimeStamp timeStamp);
+
+        @JsonProperty("uuid")
+        public abstract UUID uuid();
+        @JsonProperty("uuid")
+        public abstract UUID uuid(UUID uuid);
+
     }
 
     static class SerializerSerializer extends StdSerializer<Serializer> {
