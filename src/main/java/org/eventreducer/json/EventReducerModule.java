@@ -37,9 +37,6 @@ public class EventReducerModule extends SimpleModule {
 
     public static abstract class SerializableMixin {
 
-        @JsonIgnore
-        private Serializer serializer;
-
         @JsonProperty("@hash")
         public abstract <T extends Serializable> Serializer<T> entitySerializer() throws ClassNotFoundException, IllegalAccessException, InstantiationException;
 
