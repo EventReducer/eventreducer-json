@@ -1,6 +1,5 @@
 package org.eventreducer.json;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -21,6 +20,7 @@ import org.eventreducer.Serializable;
 import org.eventreducer.Serializer;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class EventReducerModule extends SimpleModule {
@@ -30,7 +30,9 @@ public class EventReducerModule extends SimpleModule {
 
         addSerializer(new TimestampSerializer());
         addSerializer(new SerializerSerializer());
+        addSerializer(new BigDecimalSerializer());
         addDeserializer(TimeStamp.class, new TimestampDeserializer());
+        addDeserializer(BigDecimal.class, new BigDecimalDeserializer());
         setMixInAnnotation(Serializable.class, SerializableMixin.class);
         setMixInAnnotation(Command.class, CommandMixin.class);
         setMixInAnnotation(Event.class, EventMixin.class);
@@ -76,6 +78,39 @@ public class EventReducerModule extends SimpleModule {
         public abstract UUID uuid(UUID uuid);
 
     }
+
+    static class BigDecimalSerializer extends StdSerializer<BigDecimal> {
+        protected BigDecimalSerializer() {
+            super(BigDecimal.class);
+        }
+
+        @Override
+        public void serialize(BigDecimal value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+            gen.writeString(value.toPlainString());
+        }
+
+        @Override
+        public void serializeWithType(BigDecimal value, JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
+            serialize(value, gen, serializers);
+        }
+    }
+
+    static class BigDecimalDeserializer extends StdDeserializer<BigDecimal> {
+        public BigDecimalDeserializer() {
+            super(BigDecimal.class);
+        }
+
+        @Override
+        public BigDecimal deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            return new BigDecimal(p.readValueAs(String.class));
+        }
+
+        @Override
+        public BigDecimal deserializeWithType(JsonParser p, DeserializationContext ctxt, TypeDeserializer typeDeserializer) throws IOException {
+            return new BigDecimal(p.readValueAs(String.class));
+        }
+    }
+
 
     static class SerializerSerializer extends StdSerializer<Serializer> {
         protected SerializerSerializer() {
