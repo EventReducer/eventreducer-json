@@ -6,27 +6,43 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
+import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.apache.commons.net.ntp.TimeStamp;
 import org.eventreducer.Command;
 import org.eventreducer.Event;
 import org.eventreducer.Serializable;
 import org.eventreducer.Serializer;
+import org.eventreducer.annotations.Property;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class EventReducerModule extends SimpleModule {
 
     public EventReducerModule() {
         super("EventReducerModule", new Version(1,0,0,null, "org.eventreducer.json", "EventReducerModule"));
+
+        setSerializerModifier(new BeanSerializerModifier() {
+            @Override
+            public List<BeanPropertyWriter> changeProperties(SerializationConfig config, BeanDescription beanDesc, List<BeanPropertyWriter> beanProperties) {
+                List<BeanPropertyWriter> updatedBeanProperties = beanProperties.stream().
+                        filter(prop -> prop.getAnnotation(Property.class) != null || prop.getAnnotation(JsonProperty.class) != null).
+                        collect(Collectors.toList());
+                return updatedBeanProperties;
+            }
+        });
 
         addSerializer(new TimestampSerializer());
         addSerializer(new SerializerSerializer());

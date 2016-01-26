@@ -46,8 +46,8 @@ public class ObjectMapper extends com.fasterxml.jackson.databind.ObjectMapper {
 
         setSerializationInclusion(JsonInclude.Include.NON_NULL);
         setVisibility(getSerializationConfig().getDefaultVisibilityChecker()
-                .withFieldVisibility(JsonAutoDetect.Visibility.NONE)
-                .withGetterVisibility(JsonAutoDetect.Visibility.PUBLIC_ONLY)
+                .withFieldVisibility(JsonAutoDetect.Visibility.PUBLIC_ONLY)
+                .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
                 .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
                 .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
         configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
